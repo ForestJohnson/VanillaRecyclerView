@@ -45,8 +45,7 @@ module.exports = {
   devtool: false,
   target: ['web', 'es5'],
   optimization: {
-    minimize: true,
-    minimizer: [new TerserPlugin(), new CssMinimizerPlugin(),
-    ],
+    minimize: false,
+    runtimeChunk: false
   },
 };

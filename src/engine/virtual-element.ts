@@ -82,7 +82,7 @@ export class VirtualElement<T> {
           index: this.index,
         });
       }
-      wrapperElement?.classList.add('hidden');
+      wrapperElement.parentElement?.removeChild(wrapperElement);
       return {
         renderer: renderer,
         wrapperElement: wrapperElement,
