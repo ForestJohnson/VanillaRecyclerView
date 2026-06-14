@@ -96,6 +96,31 @@ export class VanillaRecyclerView<T> implements VanillaRecyclerViewAPI<T> {
   /* unmounted, reusable elements */
   public reusables: Reusable<T>[] = [];
 
+  private _domReorderTimeout: ReturnType<typeof setTimeout> | null = null;
+  private _lastDomReorderScrollSize = 0;
+
+  private debounceReorderDOM(): void {
+    if (this._domReorderTimeout) {
+      clearTimeout(this._domReorderTimeout);
+    }
+    this._domReorderTimeout = setTimeout(() => {
+      this.reorderDOMByPosition();
+      this._domReorderTimeout = null;
+    }, 500);
+  }
+
+  private reorderDOMByPosition(): void {
+    const mounted = this.mountedVirtualElements.filter(ve => ve.isMounted());
+    if (mounted.length < 2) return;
+
+    mounted.sort((a, b) => a.start - b.start);
+
+    const container = this.container;
+    for (let i = 0; i < mounted.length; i++) {
+      container.appendChild(mounted[i].wrapperElement!);
+    }
+  }
+
   public constructor(
     root: HTMLDivElement,
     options: VanillaRecyclerViewOptions<T>
@@ -299,6 +324,12 @@ export class VanillaRecyclerView<T> implements VanillaRecyclerViewAPI<T> {
 
     this.pendingUnmount = [];
     this.mountedVirtualElements = shouldMount;
+
+    const currentMax = this.getMaxScrollSize();
+    if (currentMax !== this._lastDomReorderScrollSize) {
+      this._lastDomReorderScrollSize = currentMax;
+      this.debounceReorderDOM();
+    }
   }
 
   /**
