@@ -1,4 +1,3 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -30,10 +29,6 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'vanilla-recycler-view.min.css'
-    }),
-    new HtmlWebpackPlugin({
-      inject: 'body',
-      template: 'public/index.html',
     }),
   ],
   output: {
